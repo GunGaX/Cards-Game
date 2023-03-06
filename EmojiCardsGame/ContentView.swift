@@ -8,16 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    var emojis = ["🦈", "🦋", "🐠", "🦚", "🌵", "🍀", "🌳", "🍁", "🌖", "✨", "☀️", "❄️", "⛈️", "🍑", "🍎", "🍊", "🍐", "🍕", "🏀", "🎾", "🏐", "🌸", "🌼"]
-    @State var emojiCount = 4
+        
+    @State var emojis: [String] = ["🦈", "🦋", "🐠", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐸", "🐥", "🐤", "🐛", "🐺", "🦉", "🦆", "🐢", "🦖", "🐍", "🦑", "🦀", "🐞"]
     
     var body: some View {
         VStack {
+            
+            Text("Memorize")
+                .font(.title)
+            
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
-                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                    ForEach(emojis[0..<Int.random(in: 8..<emojis.count)], id: \.self) { emoji in
                         CardView(content: emoji)
-                            .aspectRatio(3/4, contentMode: .fit)
+                            .aspectRatio(2/3, contentMode: .fit)
                     }
                 }
                 .padding()
@@ -26,36 +30,51 @@ struct ContentView: View {
             
             Spacer()
             
-            HStack {
-                remove
-                Spacer()
-                add
+            HStack(alignment: .bottom) {
+                animalButton
+                foodButton
+                vehicleButton
             }
             .padding(.horizontal)
         }
     }
     
-    var add: some View {
+    var animalButton: some View {
         Button {
-            if emojiCount < emojis.count {
-                emojiCount += 1
-            }
+            emojis = ["🦈", "🦋", "🐠", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐸", "🐥", "🐤", "🐛", "🐺", "🦉", "🦆", "🐢", "🦖", "🐍", "🦑", "🦀", "🐞"].shuffled()
         } label: {
-            Image(systemName: "plus.square")
-                .font(.largeTitle)
-                .padding(.horizontal)
+            VStack {
+                Image(systemName: "pawprint.fill")
+                    .font(.largeTitle)
+                    .padding(.horizontal)
+                Text("Animals")
+            }
         }
     }
     
-    var remove: some View {
+    var foodButton: some View {
         Button {
-            if emojiCount != 1 {
-                emojiCount -= 1
-            }
+            emojis = ["🌽", "🍗", "🧀", "🥩", "🍓", "🍕", "🍏", "🍐", "🍑", "🍌", "🍋", "🍊", "🍍", "🥥", "🍇", "🍉", "🥑", "🥒", "🫑", "🍔", "🍟", "🥗", "🌮", "🍰"].shuffled()
         } label: {
-            Image(systemName: "minus.square")
-                .font(.largeTitle)
-                .padding(.horizontal)
+            VStack {
+                Image(systemName: "carrot.fill")
+                    .font(.largeTitle)
+                    .padding(.horizontal)
+                Text("Food")
+            }
+        }
+    }
+    
+    var vehicleButton: some View {
+        Button {
+            emojis = ["🚗", "🚕", "🚌", "✈️", "🚀", "🏎️", "🚓", "🚑", "🚒", "🚐", "🚚", "🛻", "🚛", "🚜", "🛴", "🚲", "🛵", "🏍️", "🛺", "🚔", "🚍", "🚘", "🚖", "🚅"].shuffled()
+        } label: {
+            VStack {
+                Image(systemName: "car.fill")
+                    .font(.largeTitle)
+                    .padding(.horizontal)
+                Text("Vehicles")
+            }
         }
     }
 }
@@ -76,6 +95,7 @@ struct CardView: View {
                     .stroke(lineWidth: 4)
                 Text(content)
                     .font(.largeTitle)
+                    .padding()
             }
             else {
                 rectangle
