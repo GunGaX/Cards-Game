@@ -28,6 +28,7 @@ struct ContentView: View {
                 .padding()
             }
             .foregroundColor(.blue)
+            .scrollIndicators(.hidden)
             
             Spacer()
             
