@@ -16,6 +16,7 @@ struct ContentView: View {
             
             Text("Memorize")
                 .font(.title)
+                .bold()
             
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
