@@ -8,106 +8,93 @@
 import SwiftUI
 
 struct ContentView: View {
-        
-    @State var emojis: [String] = ["🦈", "🦋", "🐠", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐸", "🐥", "🐤", "🐛", "🐺", "🦉", "🦆", "🐢", "🦖", "🐍", "🦑", "🦀", "🐞"]
+    
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
-        VStack {
-            
-            Text("Memorize")
-                .font(.title)
-                .bold()
-            
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
-                    ForEach(emojis[0..<Int.random(in: 8..<emojis.count)], id: \.self) { emoji in
-                        CardView(content: emoji)
-                            .aspectRatio(2/3, contentMode: .fit)
-                    }
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
+                ForEach(viewModel.cards) { card in
+                    CardView(card: card)
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .padding(1)
+                        .onTapGesture {
+                            viewModel.choose(card)
+                        }
                 }
-                .padding()
             }
-            .foregroundColor(.blue)
-            .scrollIndicators(.hidden)
-            
-            Spacer()
-            
-            HStack(alignment: .bottom) {
-                animalButton
-                foodButton
-                vehicleButton
-            }
-            .padding(.horizontal)
+            .padding()
         }
-    }
-    
-    var animalButton: some View {
-        Button {
-            emojis = ["🦈", "🦋", "🐠", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐸", "🐥", "🐤", "🐛", "🐺", "🦉", "🦆", "🐢", "🦖", "🐍", "🦑", "🦀", "🐞"].shuffled()
-        } label: {
-            VStack {
-                Image(systemName: "pawprint.fill")
-                    .font(.largeTitle)
-                    .padding(.horizontal)
-                Text("Animals")
-            }
-        }
-    }
-    
-    var foodButton: some View {
-        Button {
-            emojis = ["🌽", "🍗", "🧀", "🥩", "🍓", "🍕", "🍏", "🍐", "🍑", "🍌", "🍋", "🍊", "🍍", "🥥", "🍇", "🍉", "🥑", "🥒", "🫑", "🍔", "🍟", "🥗", "🌮", "🍰"].shuffled()
-        } label: {
-            VStack {
-                Image(systemName: "carrot.fill")
-                    .font(.largeTitle)
-                    .padding(.horizontal)
-                Text("Food")
-            }
-        }
-    }
-    
-    var vehicleButton: some View {
-        Button {
-            emojis = ["🚗", "🚕", "🚌", "✈️", "🚀", "🏎️", "🚓", "🚑", "🚒", "🚐", "🚚", "🛻", "🚛", "🚜", "🛴", "🚲", "🛵", "🏍️", "🛺", "🚔", "🚍", "🚘", "🚖", "🚅"].shuffled()
-        } label: {
-            VStack {
-                Image(systemName: "car.fill")
-                    .font(.largeTitle)
-                    .padding(.horizontal)
-                Text("Vehicles")
-            }
-        }
+        .foregroundColor(.blue)
+        .scrollIndicators(.hidden)
     }
 }
+    
+//    var animalButton: some View {
+//        Button {
+//            emojis = ["🦈", "🦋", "🐠", "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐸", "🐥", "🐤", "🐛", "🐺", "🦉", "🦆", "🐢", "🦖", "🐍", "🦑", "🦀", "🐞"].shuffled()
+//        } label: {
+//            VStack {
+//                Image(systemName: "pawprint.fill")
+//                    .font(.largeTitle)
+//                    .padding(.horizontal)
+//                Text("Animals")
+//            }
+//        }
+//    }
+    
+//    var foodButton: some View {
+//        Button {
+//            emojis = ["🌽", "🍗", "🧀", "🥩", "🍓", "🍕", "🍏", "🍐", "🍑", "🍌", "🍋", "🍊", "🍍", "🥥", "🍇", "🍉", "🥑", "🥒", "🫑", "🍔", "🍟", "🥗", "🌮", "🍰"].shuffled()
+//        } label: {
+//            VStack {
+//                Image(systemName: "carrot.fill")
+//                    .font(.largeTitle)
+//                    .padding(.horizontal)
+//                Text("Food")
+//            }
+//        }
+//    }
+//
+//    var vehicleButton: some View {
+//        Button {
+//            emojis = ["🚗", "🚕", "🚌", "✈️", "🚀", "🏎️", "🚓", "🚑", "🚒", "🚐", "🚚", "🛻", "🚛", "🚜", "🛴", "🚲", "🛵", "🏍️", "🛺", "🚔", "🚍", "🚘", "🚖", "🚅"].shuffled()
+//        } label: {
+//            VStack {
+//                Image(systemName: "car.fill")
+//                    .font(.largeTitle)
+//                    .padding(.horizontal)
+//                Text("Vehicles")
+//            }
+//        }
+//    }
+
 
 struct CardView: View {
-    @State var isFaceUp: Bool = false
-    var content: String
+    
+    let card: MemoryGame<String>.Card
     
     var body: some View {
         ZStack {
             let rectangle = RoundedRectangle(cornerRadius: 20, style: .continuous)
-
-            if isFaceUp {
+            
+            if card.isFaceUp {
                 rectangle
                     .fill()
                     .foregroundColor(.white)
                 rectangle
                     .stroke(lineWidth: 4)
-                Text(content)
+                Text(card.content)
                     .font(.largeTitle)
                     .padding()
-            }
-            else {
+            } else if card.isMatched {
+                rectangle.opacity(0.4)
+            } else {
                 rectangle
                     .fill()
                 rectangle
                     .stroke(lineWidth: 4)
             }
-        }
-        .onTapGesture {
-            isFaceUp.toggle()
         }
     }
 }
@@ -121,9 +108,11 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let viewModel = EmojiMemoryGame()
+        
+        ContentView(viewModel: viewModel)
             .preferredColorScheme(.light)
-        ContentView()
+        ContentView(viewModel: viewModel)
             .preferredColorScheme(.dark)
     }
 }
